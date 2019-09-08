@@ -87,6 +87,9 @@ void * function(void *arg){ // arg is from thread of main
 				}
 			}
 		}
+
+		printf("<%s>", http_host);
+
 	
 		int sock = socket(AF_INET, SOCK_STREAM, 0);
 		if(sock == SOCKET_ERROR){
@@ -94,17 +97,20 @@ void * function(void *arg){ // arg is from thread of main
 			exit(1);
 		}
 
+		printf("%d", sock);
+
 		struct hostent * server = gethostbyname(http_host);
 		if(server == NULL){
 			perror(">>>>> there are no such host <<<<<<");
 			exit(1);
 		}
 
-		memset(&serveraddr, 0, sizeof(serveraddr));
+		memset((char *)&serveraddr, 0, sizeof(serveraddr));
 		serveraddr.sin_family = AF_INET;
 		serveraddr.sin_port = htons(80);
 		memcpy((char *)server->h_addr, (char *)&serveraddr.sin_addr.s_addr, server->h_length);
 
+		serveraddr.sin_addr.s_addr = inet_addr(inet_ntoa(*(struct in_addr*)server->h_addr_list[0]));
 
 		// int connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
 		int retval = connect(sock, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
