@@ -68,8 +68,9 @@ void * function(void *arg){ // arg is from thread of main
 		if(f == 0) // read until meet EOF / if meet EOF, read returns 0
 			break;
 		printf("%s", buf);
-		int len = strlen(buf);
 
+		int len = strlen(buf);
+		
 		for(int i=0; i<len; i++){
 			if(buf[i] !='H')
 				continue;
@@ -120,7 +121,8 @@ void * function(void *arg){ // arg is from thread of main
 			exit(1);
 		}
 
-		int fd = write(sock, buf, len);
+		
+		int fd = write(sock, buf, strlen(buf));
 		if(fd < 0){
 			perror(">>>>> socket writing error <<<<<");
 			exit(1);
@@ -128,7 +130,7 @@ void * function(void *arg){ // arg is from thread of main
     
         fd = read(sock, buf, BUFSIZE); //get http reply
 
-        fd = write(sckfd, buf, len); //relay http request
+        fd = write(sckfd, buf, strlen(buf)); //relay http request
         if (fd < 0){
 			perror(">>>>> socket writing error <<<<<");
 			exit(1);
@@ -137,6 +139,17 @@ void * function(void *arg){ // arg is from thread of main
         printf("[+] Relay Success!!!\n");
         close(sock);
 	}
+
+	for(int i=0; i<sock_num; i++){
+		if(sock_id[i] == sckfd){
+			for(int j=i; j<sock_num-1; j++)
+				sock_id[j] = sock_id[j+1];
+			break;
+		}
+	}
+
+	sock_id[sock_num--] = 0;
+	close(sckfd);
 }
 
 
