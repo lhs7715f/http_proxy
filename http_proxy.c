@@ -139,16 +139,6 @@ void * function(void *arg){ // arg is from thread of main
         printf("[+] Relay Success!!!\n");
         close(sock);
 	}
-
-	for(int i=0; i<sock_num; i++){
-		if(sock_id[i] == sckfd){
-			for(int j=i; j<sock_num-1; j++)
-				sock_id[j] = sock_id[j+1];
-			break;
-		}
-	}
-
-	sock_id[sock_num--] = 0;
 	close(sckfd);
 }
 
